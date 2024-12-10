@@ -1,0 +1,92 @@
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+#narrative-text {
+    margin-bottom: 30px;
+    font-size: 1.2em;
+}
+
+#choices {
+    margin-top: 20px;
+}
+
+.choice {
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+}
+
+.choice:hover {
+    background-color: #333;
+}
+
+.word {
+    opacity: 0;
+    display: inline-block;
+    margin-right: 5px;
+    animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        color: #000;
+    }
+    to {
+        opacity: 1;
+        color: #fff;
+    }
+}
+
+.audio-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+#start-screen {
+    text-align: center;
+    margin-top: 40%;
+}
+
+#welcome-text {
+    opacity: 0;
+    transition: opacity 2s ease-in;
+}
+
+#start-buttons {
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+
+#start-buttons button {
+    margin: 10px;
+    padding: 15px 30px;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    cursor: pointer;
+}
+
+#start-buttons button:hover {
+    background: #333;
+}
+
+.hidden {
+    display: none !important;
+}

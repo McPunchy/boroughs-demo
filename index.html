@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Generation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="start-screen">
+            <h1 id="welcome-text">Welcome to the Boroughs</h1>
+            <div id="start-buttons" class="hidden">
+                <button id="start-no-music">Start</button>
+                <button id="start-with-music">Start with Music</button>
+            </div>
+        </div>
+        <div id="narrative-text"></div>
+        <div id="choices"></div>
+        
+        <div class="audio-controls">
+            <button id="toggleAudio">Toggle Music</button>
+            <input type="range" id="volumeControl" min="0" max="100" value="50">
+        </div>
+    </div>
+    
+    <!-- Hidden YouTube iframe -->
+    <iframe id="youtubePlayer" style="display:none" 
+            src="https://www.youtube.com/embed/ysOOFIOAy7A?enablejsapi=1" 
+            allow="autoplay">
+    </iframe>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+</body>
+</html>
