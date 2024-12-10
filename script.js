@@ -1,7 +1,6 @@
 
 let player;
 
-// Initialize YouTube API
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('youtubePlayer', {
         events: {
@@ -24,16 +23,38 @@ function onPlayerReady(event) {
     };
 }
 
+class StoryStateManager {
+    constructor() {
+        this.stats = JSON.parse(JSON.stringify(storyContent.stats)); // Deep copy initial stats
+        this.currentScene = 'start';
+    }
+
+    updateAspect(aspect, value) {
+        if (this.stats.aspects.hasOwnProperty(aspect)) {
+            this.stats.aspects[aspect] += value;
+        }
+    }
+
+    addCharacterAppearance(detail) {
+        this.stats.characterAppearance.push(detail);
+    }
+
+    addPatronAppearance(detail) {
+        this.stats.patronAppearance.push(detail);
+    }
+
+    setCharacterName(name) {
+        this.stats.characterName = name;
+    }
+}
+
 class StoryTeller {
     constructor() {
         this.narrativeElement = document.getElementById('narrative-text');
         this.choicesElement = document.getElementById('choices');
+        this.stateManager = new StoryStateManager();
         
-        // Word timing configurations
-        this.defaultDelay = 100;  // Default delay between words
-        this.shortPause = 500;    // Short pause
-        this.mediumPause = 1000;  // Medium pause
-        this.longPause = 2000;    // Long pause
+        this.defaultDelay = 300;
     }
 
     async displayWord(word, delay = this.defaultDelay) {
@@ -52,13 +73,14 @@ class StoryTeller {
         }
     }
 
+
     displayChoices(choices) {
         choices.forEach((choice, index) => {
             setTimeout(() => {
                 const choiceDiv = document.createElement('div');
                 choiceDiv.className = 'choice';
-                choiceDiv.textContent = choice;
-                choiceDiv.onclick = () => this.handleChoice(index);
+                choiceDiv.textContent = choice.text;
+                choiceDiv.onclick = () => this.handleChoice(choice);
                 this.choicesElement.appendChild(choiceDiv);
                 
                 setTimeout(() => {
@@ -68,54 +90,53 @@ class StoryTeller {
         });
     }
 
-    handleChoice(index) {
-        // Handle choice selection here
-        console.log(`Choice ${index + 1} selected`);
+    async handleChoice(choice) {
+        // Apply effects
+        if (choice.effects) {
+            if (choice.effects.aspects) {
+                Object.entries(choice.effects.aspects).forEach(([aspect, value]) => 
+                    this.stateManager.updateAspect(aspect, value));
+            }
+            if (choice.effects.characterAppearance) {
+                choice.effects.characterAppearance.forEach(detail => 
+                    this.stateManager.addCharacterAppearance(detail));
+            }
+            if (choice.effects.patronAppearance) {
+                choice.effects.patronAppearance.forEach(detail => 
+                    this.stateManager.addPatronAppearance(detail));
+            }
+        }
+
+        // Clear current content
+        this.narrativeElement.innerHTML = '';
+        this.choicesElement.innerHTML = '';
+
+        // Load next scene
+        const nextScene = storyContent.scenes[choice.nextScene];
+        if (nextScene) {
+            await this.tellStory(nextScene.narrative);
+            this.displayChoices(nextScene.choices);
+        } else {
+            console.error(`Scene '${choice.nextScene}' not found`);
+        }
     }
 }
 
-// Usage example
 const story = new StoryTeller();
 
-const openingNarrative = [
-    { text: "Breathe.", delay: 2000 },
-    { text: "Keep", delay: 1000 },
-    { text: "breathing.", delay: 2000 },
-    { text: "There", delay: 300 },
-    { text: "you", delay: 300 },
-    { text: "go.", delay: 500 },
-    { text: "Can", delay: 300 },
-    { text: "you", delay: 300 },
-    { text: "tell", delay: 300 },
-    { text: "me", delay: 300 },
-    { text: "what", delay: 300 },
-    { text: "you", delay: 300 },
-    { text: "remember?", delay: 300 }
-];
-
-const choices = [
-    "I don't remember much. I was driving.",
-    "I was walking home from work.",
-    "I'd just left the subway."
-];
-
 window.onload = async () => {
-    // Hide main content initially
     document.getElementById('narrative-text').classList.add('hidden');
     document.getElementById('choices').classList.add('hidden');
     document.getElementById('toggleAudio').parentElement.classList.add('hidden');
     
-    // Fade in welcome text
     const welcomeText = document.getElementById('welcome-text');
     welcomeText.style.opacity = '1';
     
-    // Wait 2 seconds, then show buttons
     await new Promise(resolve => setTimeout(resolve, 2000));
     const startButtons = document.getElementById('start-buttons');
     startButtons.classList.remove('hidden');
     startButtons.style.opacity = '1';
     
-    // Add button listeners
     document.getElementById('start-no-music').onclick = startStory;
     document.getElementById('start-with-music').onclick = startStoryWithMusic;
 };
@@ -126,8 +147,9 @@ async function startStory() {
     document.getElementById('choices').classList.remove('hidden');
     document.getElementById('toggleAudio').parentElement.classList.remove('hidden');
     
-    await story.tellStory(openingNarrative);
-    story.displayChoices(choices);
+    const firstScene = storyContent.scenes['start'];
+    await story.tellStory(firstScene.narrative);
+    story.displayChoices(firstScene.choices);
 }
 
 async function startStoryWithMusic() {
