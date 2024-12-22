@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="tags-panel">
+            <h2>Available Tags</h2>
+            <div id="available-tags" class="tags-container"></div>
+        </div>
+        <div class="selected-panel">
+            <div class="header">
+                <h2>Selected Tags</h2>
+                <button id="reset-button" class="reset-btn">Reset</button>
+            </div>
+            <div id="selected-tags" class="tags-container"></div>
+            <div id="completed-items" class="results">
+                <h3>Complete Items:</h3>
+                <ul id="complete-items-list"></ul>
+            </div>
+            <div id="possible-items" class="results">
+                <h3>Possible Items:</h3>
+                <ul id="items-list"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="tags.js"></script>
+    <script src="itemDefinitions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
