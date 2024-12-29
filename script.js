@@ -377,6 +377,19 @@ document.getElementById('restart-button').addEventListener('click', () => {
     const pauseIcon = document.querySelector('.pause-icon');
     playIcon.classList.remove('hidden');
     pauseIcon.classList.add('hidden');
+
+    currentState = {
+        screen: 'opening',
+        path: null,
+        scene: null,
+        character: {
+            name: null,
+            age: null,
+            pronouns: null
+        },
+        attributes: null,
+        storyPath: []
+    };
     
     // Reset screens
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
