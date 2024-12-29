@@ -255,12 +255,54 @@ function showDeathPath(categoryId) {
                 }, index * 200);
             });
         }, 800);
+    } else if (categoryId === 'accident') {
+        transitionToScreen('path');
+        setTimeout(() => {
+            const pathScreen = document.getElementById('path-screen');
+            const promptText = pathScreen.querySelector('.typewriter-text');
+            typewriterEffect(promptText, narrativeData.accidentPath.prompt);
+            
+            const choicesContainer = document.getElementById('path-choices');
+            const descriptionText = document.querySelector('#path-screen .description-text');
+            choicesContainer.innerHTML = '';
+            
+            narrativeData.accidentPath.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'choice';
+                button.setAttribute('data-path', choice.id);
+                button.textContent = choice.text;
+                button.style.opacity = '0';
+                button.style.transform = 'translateX(-20px)';
+                
+                button.addEventListener('click', handlePathChoice);
+                button.addEventListener('mouseenter', () => {
+                    descriptionText.textContent = choice.details;
+                    descriptionText.style.opacity = '1';
+                });
+                button.addEventListener('mouseleave', () => {
+                    descriptionText.style.opacity = '0';
+                });
+                
+                choicesContainer.appendChild(button);
+                
+                setTimeout(() => {
+                    button.style.opacity = '1';
+                    button.style.transform = 'translateX(0)';
+                }, index * 200);
+            });
+        }, 800);
     }
 }
 
 function handlePathChoice(event) {
     const pathId = event.target.getAttribute('data-path');
-    const path = narrativeData.violencePath.choices.find(c => c.id === pathId);
+    const pathData = {
+        'violence': narrativeData.violencePath,
+        'accident': narrativeData.accidentPath
+        // Ready for more paths
+    };
+    
+    const path = pathData[currentState.path].choices.find(c => c.id === pathId);
     
     currentState.storyPath.push({
         type: 'path',
@@ -323,6 +365,24 @@ function handleBranchChoice(branch) {
         showOutcomes(branch);
     }, 800);
 }
+
+document.getElementById('restart-button').addEventListener('click', () => {
+    // Stop and reset YouTube player if it exists
+    if (player && typeof player.stopVideo === 'function') {
+        player.stopVideo();
+    }
+    
+    // Reset audio controls
+    const playIcon = document.querySelector('.play-icon');
+    const pauseIcon = document.querySelector('.pause-icon');
+    playIcon.classList.remove('hidden');
+    pauseIcon.classList.add('hidden');
+    
+    // Reset screens
+    document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+    document.getElementById('opening-screen').classList.add('active');
+});
+
 
 function showOutcomes(branch) {
     const choicesContainer = document.getElementById('path-choices');
